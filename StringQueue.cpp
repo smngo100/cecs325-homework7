@@ -4,60 +4,145 @@
 
 #include "StringQueue.h"
 
-// Fields //
-// std::string* m_data, an array in dynamic memory that stores the elements of the queue.
+StringQueue::StringQueue() {
+    m_dataSize = 8;
+    m_data = new std::string[m_dataSize];
+    m_count = 0;
+    m_front = 0;
+    m_rear = 0;
+}
 
+StringQueue::~StringQueue() {
+    delete[] m_data;
+}
 
-// size_t m_dataSize, the length of the currently-used m_data array, initially 8.
+StringQueue::StringQueue(const StringQueue& other)
+    : m_dataSize(other.m_dataSize), m_count(other.m_count),
+      m_front(0), m_rear(other.m_count)
+{
+    m_data = new std::string[m_dataSize];
 
+    for (size_t i = 0; i < m_count; ++i) {
+        size_t index = (other.m_front + i) % other.m_dataSize;
+        m_data[i] = other.m_data[index];
+    }
+}
 
-// size_t m_count, the number of elements that are still in the queue, initially 0.
+StringQueue& operator=(const StringQueue& other) {
+    if (this == &other) {
+        return *this;
+    }
 
+    m_count = other.m_count;
+    m_dataSize = other.m_dataSize;
+    delete[] m_data;
+    m_data = new std::string[m_dataSize];
 
-// size_t m_front, the index of where the "front" element is stored, initially 0.
+    for (size_t i = 0; i < m_count; ++i) {
+        size_t index = (other.m_front + i) % other.m_dataSize;
+        m_data[i] = other.m_data[index];
+    }
 
+    m_front = 0;
+    m_rear = m_count;
 
-// size_t m_rear, the index of where the next element to be enqueued will be placed, initially 0.
+    return *this;
+}
 
+StringQueue::StringQueue(StringQueue&& other)
+    : m_data(other.m_data),
+      m_dataSize(other.m_dataSize),
+      m_count(other.m_count),
+      m_front(other.m_front),
+      m_rear(other.m_rear)
 
+{
+    other.m_data = nullptr;
+    other.m_count = 0;
+    other.m_dataSize = 0;
+    other.m_front = 0;
+    other.m_rear = 0;
+}
 
+StringQueue& StringQueue::operator=(StringQueue&& other) {
+    if (this == &other) {
+        return *this;
+    }
 
+    delete[] m_data;
 
+    m_data = other.m_data;
+    m_count = other.m_count;
+    m_dataSize = other.m_dataSize;
+    m_front = other.m_front;
+    m_rear = other.m_rear;
 
+    other.m_data = nullptr;
+    other.m_count = 0;
+    other.m_dataSize = 0;
+    other.m_front = 0;
+    other.m_rear = 0;
 
-// Constructors //
-// A default constructor, which initializes the queue with a dynamic data array of length 8.
+    return *this;
+}
 
+size_t size() const {
+    return m_count;
+}
 
+size_t capacity() const {
+    return m_dataSize - m_count;
+}
 
+void clear() {
+    m_count = 0;
+    m_front = 0;
+    m_rear = 0;
+}
 
+void enqueue(std::string value) {
+    if (capacity() == 0) {
+        size_t newSize = m_dataSize * 2;
+        std::string* newData = new std::string[newSize];
 
+        for (size_t i = 0; i < m_count; ++i) {
+            size_t oldIndex = (m_front + i) % m_dataSize;
+            newData[i] = std::move(m_data[oldIndex]);
+        }
 
+        delete[] m_data;
+        m_data = newData;
+        m_front = 0;
+        m_rear = m_count;
+        m_dataSize = newSize;
+    }
 
+    m_data[m_rear] = std::move(value);
+    m_rear = (m_rear + 1) % m_dataSize;
+    ++m_count;
+}
 
+std::string dequeue() {
+    if (m_count == 0) {
+        return std::string("");
+    }
 
+    std::string temp = std::move(m_data[m_front]);
+    m_front = (m_front + 1) % m_dataSize;
+    --m_count;
+    return temp;
+}
 
-// Functions //
-// size_t size() const, which returns the number of elements in the queue.
+std::ostream& operator<<(std::ostream& lhs, const StringQueue& rhs) {
+    if (rhs.m_count == 0) {
+        return lhs;
+    }
 
+    lhs << rhs.m_data[rhs.m_front];
 
-// size_t capacity() const, which returns the number of elements that could be added to the queue without requiring it to resize.
-
-
-// void clear(), which resets m_count, m_front, and m_rear to 0.
-
-
-// void enqueue(std::string value), which first resizes the queue if its capacity is 0; and then moves the value into m_data at the index specified by m_rear. m_rear is incremented, resetting back to 0 if it has reached the end of the data array.
-
-
-
-
-
-// ALSO IMPLEMENT //
-// ~StringQueue(), a destructor that frees the m_data array.
-// A copy constructor that performs a deep copy of its parameter.
-// A copy assignment operator=, that overrides lhs with a deep copy of rhs, but only after freeing the m_data array already owned by lhs.
-// A move constructor that takes ownership of a temporary StringQueue's data array, and sets the temporary's array to nullptr.
-// A move assignment operator=, that overrides lhs by swapping its m_data pointer with rhs's, so that the temporary rhs will automatically destroy lhs's old data array.
-
-
+    for (size_t i = 1; i < rhs.m_count; ++i) {
+        size_t index = (rhs.m_front + i) % rhs.m_dataSize;
+        lhs << "," << rhs.m_data[index];
+    }
+    return lhs;
+}

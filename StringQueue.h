@@ -32,7 +32,7 @@ public:
 	std::string dequeue();				// Moves the element at front of queue into temp string, ++m_front , returns temp
 
 	// Friend function for output
-	friend sd::ostream& operator<<(sd::ostream& lhs, const StringQueue& rhs);
+	friend std::ostream& operator<<(std::ostream& lhs, const StringQueue& rhs);
 };
 
 
