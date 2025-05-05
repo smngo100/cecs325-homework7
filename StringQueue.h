@@ -16,23 +16,23 @@ private:
     size_t m_rear;			// Index of where the next element to be enqueued will be placed
 
 public:
-	// Constructors, destructor, and operators
-	StringQueue();										// Default constructor
-	~StringQueue();										// Destructor
-	StringQueue(const StringQueue& other); 				// Copy constructor
-	StringQueue& operator=(const StringQueue& other); 	// Copy assignment operator=
-	StringQueue(StringQueue&& other);					// Move constructor
-	StringQueue& operator=(StringQueue&& other);		// Move assignment operator=
+    // Constructors, destructor, and operators
+    StringQueue();										// Default constructor
+    ~StringQueue();										// Destructor
+    StringQueue(const StringQueue& other); 				// Copy constructor
+    StringQueue& operator=(const StringQueue& other); 	// Copy assignment operator=
+    StringQueue(StringQueue&& other);					// Move constructor
+    StringQueue& operator=(StringQueue&& other);		// Move assignment operator=
 
-	// Queue operations
-	size_t size() const;				// Returns the # of elements in the queue
-	size_t capacity() const;			// Returns the # of elements that *could* be added to the queue withnout resizing
-	void clear();						// Resets m_count, m_front, and m_rear to 0
-	void enqueue(std::string value);	// Resizes the queue if its capacity is 0, moves the val into m_data, resets to 0 if reaches end of array
-	std::string dequeue();				// Moves the element at front of queue into temp string, ++m_front , returns temp
+    // Queue operations
+    size_t size() const;				// Returns the # of elements in the queue
+    size_t capacity() const;			// Returns the # of elements that *could* be added to the queue withnout resizing
+    void clear();						// Resets m_count, m_front, and m_rear to 0
+    void enqueue(std::string value);	// Resizes the queue if its capacity is 0, moves the val into m_data, resets to 0 if reaches end of array
+    std::string dequeue();				// Moves the element at front of queue into temp string, ++m_front , returns temp
 
-	// Friend function for output
-	friend std::ostream& operator<<(std::ostream& lhs, const StringQueue& rhs);
+    // Friend function for output
+    friend std::ostream& operator<<(std::ostream& lhs, const StringQueue& rhs);
 };
 
 
