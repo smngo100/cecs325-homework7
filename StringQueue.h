@@ -8,13 +8,20 @@
 #include <iostream>
 
 class StringQueue {
-    // Fields
-    std::string* m_data;
-    size_t m_dataSize;
-    size_t m_count;
-    size_t m_front;
-    size_t m_rear;
+private:
+    std::string* m_data;	// Stores the elements of the queue
+    size_t m_dataSize;		// Length of the currently used array
+    size_t m_count;			// # of elements that are still in queue
+    size_t m_front;			// Index of where the "front" element is stored
+    size_t m_rear;			// Index of where the next element to be enqueued will be placed
 
+public:
+	StringQueue();										// Default constructor
+	~StringQueue();										// Destructor
+	StringQueue(const StringQueue& other); 				// Copy constructor
+	StringQueue& operator=(const StringQueue& other); 	// Copy assignment operator=
+	StringQueue(StringQueue&& other);					// Move constructor
+	StringQueue& operator=(StringQueue&& other);		// Move assignment operator=
 };
 
 
